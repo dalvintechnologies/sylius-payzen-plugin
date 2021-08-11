@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: DalvinTech\PayzenPlugin
+        psr4_prefix: DalvinTech\PayzenPlugin
