@@ -76,7 +76,6 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
                 'publicKey'=> $this->client->getPublicKey(),
                 'clientEndpoint'=>$this->client->getClientEndpoint()
         ]);
-        $request->getToken()->getDetails()->setFormData(['formToken'=> $formToken,'publicKey'=> $this->client->getPublicKey(),'clientEndpoint'=>$this->client->getClientEndpoint()]);
 
     }
 

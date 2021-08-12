@@ -44,12 +44,11 @@ class CaptureController extends PayumController
         $token = $this->getPayum()->getHttpRequestVerifier()->verify($request);
 
         $gateway = $this->getPayum()->getGateway($token->getGatewayName());
-
-        $gateway->execute(new CaptureRequest($token));
-
+        $captureRequest= new CaptureRequest($token);
+        $gateway->execute($captureRequest);
         if ($token->getGatewayName() === "payzen") {
 
-            return $this->render('Payzen/cardFormPayment.twig', ['formData' => $token->getDetails()->getFormData(), 'redirectUrl' => $token->getAfterUrl()]);
+            return $this->render('Payzen/cardFormPayment.twig', ['formData' => $captureRequest->getDataForm(), 'redirectUrl' => $token->getAfterUrl()]);
 
         }
         $this->getPayum()->getHttpRequestVerifier()->invalidate($token);
