@@ -45,7 +45,7 @@ class CaptureController extends PayumController
 
         $gateway = $this->getPayum()->getGateway($token->getGatewayName());
 
-        $gateway->execute(new Capture($token));
+        $gateway->execute(new CaptureRequest($token));
 
         if ($token->getGatewayName() === "payzen") {
 
@@ -56,12 +56,4 @@ class CaptureController extends PayumController
 
         return $this->redirect($token->getAfterUrl());
     }
-}
-
-namespace Payum\Bundle\PayumBundle\Controller;
-
-
-class CaptureController extends PayumController
-{
-
 }
