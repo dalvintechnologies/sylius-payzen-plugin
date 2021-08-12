@@ -14,7 +14,7 @@ use Payum\Core\Exception\UnsupportedApiException;
 use Payum\Core\Reply\HttpRedirect;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Core\Model\PaymentInterface as SyliusPaymentInterface;
-use Payum\Core\Request\Capture;
+use DalvinTech\PayzenPlugin\Payum\Core\Request\CaptureRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 

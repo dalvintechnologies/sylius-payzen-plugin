@@ -6,7 +6,7 @@ namespace DalvinTech\PayzenPlugin\Payum\Controller;
 
 use Payum\Bundle\PayumBundle\Controller\PayumController;
 use Payum\Core\Reply\HttpPostRedirect;
-use Payum\Core\Request\Capture;
+use DalvinTech\PayzenPlugin\Payum\Core\Request\CaptureRequest;
 use Payum\Core\Request\Generic;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
