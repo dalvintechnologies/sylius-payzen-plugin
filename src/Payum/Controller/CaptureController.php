@@ -4,11 +4,17 @@
 namespace DalvinTech\PayzenPlugin\Payum\Controller;
 
 
+use Lyra\Client;
 use Payum\Bundle\PayumBundle\Controller\PayumController;
 use Payum\Core\Reply\HttpPostRedirect;
 use DalvinTech\PayzenPlugin\Payum\Core\Request\CaptureRequest;
 use Payum\Core\Request\Generic;
+use Payum\Core\Request\GetStatusInterface;
+use Sylius\Component\Core\Model\PaymentInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CaptureController extends PayumController
@@ -54,5 +60,31 @@ class CaptureController extends PayumController
         $this->getPayum()->getHttpRequestVerifier()->invalidate($token);
 
         return $this->redirect($token->getAfterUrl());
+    }
+    public function afterCaptureAction(Request $request): Response
+    {
+        $configuration = $this->requestConfigurationFactory->create($this->orderMetadata, $request);
+
+        $token = $this->getHttpRequestVerifier()->verify($request);
+
+        /** @var Generic&GetStatusInterface $status */
+        $status = $this->getStatusRequestFactory->createNewWithModel($token);
+        dump($request);
+        dump($status);die();
+        $this->payum->getGateway($token->getGatewayName())->execute($status);
+
+        $resolveNextRoute = $this->resolveNextRouteRequestFactory->createNewWithModel($status->getFirstModel());
+
+        $this->payum->getGateway($token->getGatewayName())->execute($resolveNextRoute);
+
+        $this->getHttpRequestVerifier()->invalidate($token);
+
+        if (PaymentInterface::STATE_NEW !== $status->getValue()) {
+            /** @var FlashBagInterface $flashBag */
+            $flashBag = $request->getSession()->getBag('flashes');
+            $flashBag->add('info', sprintf('sylius.payment.%s', $status->getValue()));
+        }
+
+        return new RedirectResponse($this->router->generate($resolveNextRoute->getRouteName(), $resolveNextRoute->getRouteParameters()));
     }
 }

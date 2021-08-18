@@ -10,12 +10,42 @@ final class SyliusApi
     private $apiKey;
     /** @var string */
     private $idBoutique;
+    /** @var string */
+    private $publicKey;
+    /** @var string */
+    private $SHA256Key;
 
-    public function __construct(string $apiKey, string $idBoutique)
+    /**
+     * SyliusApi constructor.
+     * @param string $apiKey
+     * @param string $idBoutique
+     * @param string $publicKey
+     * @param string $SHA256Key
+     */
+    public function __construct(string $apiKey, string $idBoutique, string $publicKey, string $SHA256Key)
     {
         $this->apiKey = $apiKey;
-        $this->idBoutique= $idBoutique;
+        $this->idBoutique = $idBoutique;
+        $this->publicKey = $publicKey;
+        $this->SHA256Key = $SHA256Key;
     }
+
+    /**
+     * @return string
+     */
+    public function getPublicKey(): string
+    {
+        return $this->publicKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSHA256Key(): string
+    {
+        return $this->SHA256Key;
+    }
+
 
     public function getApiKey(): string
     {
