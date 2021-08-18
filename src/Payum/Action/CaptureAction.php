@@ -42,14 +42,12 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
         $payment = $request->getModel();
         $customerEmail=$payment->getOrder()->getCustomer()->getEmail();
         $orderId= $payment->getOrder()->getId();
-        $authorisation= base64_encode($this->api->getIdBoutique().":".$this->api->getApiKey());
-        $uri='https://api.payzen.eu/api-payment/V4/Charge/CreatePayment';
-        dump('capture action');
-
+//        testpublickey_mETb5YxL8BWUi0f4ITfqQH4tbzkA0kSTA6Ypy2P1ejsSm
 
         $this->client->setUsername($this->api->getIdBoutique());
         $this->client->setPassword($this->api->getApiKey());
-        $this->client->setPublicKey('16580956:testpublickey_mETb5YxL8BWUi0f4ITfqQH4tbzkA0kSTA6Ypy2P1ejsSm');
+        $this->client->setPublicKey('16580956:'.$this->api->getPublicKey());
+        $this->client->setSHA256Key($this->api->getSHA256Key());
         $this->client->setEndpoint('https://api.payzen.eu/');
         $store = array("amount" => $payment->getAmount(),
             "currency" => $payment->getCurrencyCode(),
@@ -59,7 +57,7 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
             ));
 
         $response = $this->client->post("V4/Charge/CreatePayment", $store);
-        dump($response);
+ 
         /* I check if there are some errors */
         if ($response['status'] != 'SUCCESS') {
             /* an error occurs, I throw an exception */
@@ -75,37 +73,16 @@ final class CaptureAction implements ActionInterface, ApiAwareInterface
         $request->setDataForm([
                 'formToken'=> $formToken,
                 'publicKey'=> $this->client->getPublicKey(),
-                'clientEndpoint'=>$this->client->getClientEndpoint()
+                'clientEndpoint'=>$this->client->getClientEndpoint(),
+                'lyraClient'=>$this->client,
         ]);
-        dump(  $request);
-        $request->getToken()->getDetails()->setFormData(['formToken'=> $formToken,'publicKey'=> $this->client->getPublicKey(),'clientEndpoint'=>$this->client->getClientEndpoint()]);
 
-//        try {
-//            $response = $this->client->request('POST', $uri , [
-//                'header'=>json_encode([
-//                   'Authorisation'=> "Basic ".$authorisation,
-//                    'Content-Type'=> "application/json",
-//                ]),
-//                'body' => json_encode([
-//                    'amount' => $payment->getAmount(),
-//                    'currency' => $payment->getCurrencyCode(),
-//                    'orderId'=> $orderId,
-//                    'customer'=>['email'=>$customerEmail]
-//                ]),
-//            ]);
-//            dump($response);die();
-//        } catch (RequestException $exception) {
-//            $response = $exception->getResponse();
-//            dump($response);die();
-//        } finally {
-//
-//        }
     }
 
     public function supports($request): bool
     {
         return
-            $request instanceof Capture &&
+            $request instanceof CaptureRequest &&
             $request->getModel() instanceof SyliusPaymentInterface;
     }
 

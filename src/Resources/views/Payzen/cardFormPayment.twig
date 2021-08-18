@@ -1,0 +1,38 @@
+
+{% extends '@SyliusShop/Checkout/layout.html.twig' %}
+{% block title %}{{ 'sylius.ui.complete'|trans }} | {{ parent() }}{% endblock %}
+{% block metatags %}
+    <script
+            src="https://static.payzen.eu/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+            kr-public-key="{{  formData['publicKey'] }}"
+            kr-post-url-success="{{ redirectUrl }}">
+    </script>
+    <!-- not mandatory but helps to have a nice payment form out of the box -->
+    <link rel="stylesheet" href="https://static.payzen.eu/static/js/krypton-client/V4.0/ext/classic-reset.css">
+{% endblock %}
+
+
+
+{% block  content %}
+    <div class="kr-embedded"
+         kr-form-token="{{ formData['formToken'] }}">
+
+        <!-- payment form fields -->
+        <div class="kr-pan"></div>
+        <div class="kr-expiry"></div>
+        <div class="kr-security-code"></div>
+
+        <!-- payment form submit button -->
+        <button class="kr-payment-button"></button>
+
+        <!-- error zone -->
+        <div class="kr-form-error"></div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+
+    <script
+            src="https://static.payzen.eu/static/js/krypton-client/V4.0/ext/classic.js">
+    </script>
+    {{ sylius_template_event('sylius.shop.layout.javascripts') }}
+{% endblock %}
